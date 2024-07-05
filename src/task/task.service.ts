@@ -1,25 +1,34 @@
 import { Injectable } from '@nestjs/common';
+import { ITask } from './task.interface';
+import { TaskDTO } from './task.dto';
 
 @Injectable()
 export class TaskService {
-  private tasks = [];
+   tasks = [];
 
-  createTask(title: string, description: string): string {
+  createTask(taskdto: TaskDTO): ITask {
     const id = Math.random().toString(36).substr(2, 9);
-    this.tasks.push({ id, title, description, completed: false });
-    return id;
+    const newtask = {
+      id,
+      title: taskdto.title,
+      description: taskdto.description,
+      completed: false,
+    };
+    
+    this.tasks.push(newtask);
+    return newtask;
   }
 
-  getTask(id: string): any {
+  getTask(id: string): ITask {
     return this.tasks.find(task => task.id === id);
   }
 
-  completeTask(id: string): boolean {
+  completeTask(id: string): ITask {
     const task = this.getTask(id);
     if (task) {
       task.completed = true;
-      return true;
+      return task;
     }
-    return false;
+    return task;
   }
 }

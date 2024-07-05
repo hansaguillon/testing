@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
+import { IUser } from './user.interface';
 
 describe('UserController', () => {
   let controller: UserController;
@@ -21,15 +22,16 @@ describe('UserController', () => {
   });
 
   it('should create a user', () => {
-    const createUserDto = { name: 'John Doe', email: 'john@example.com' };
-    jest.spyOn(service, 'createUser').mockReturnValue('mockedId');
+    const userDTO = { name: 'balerion', email: 'semurio@example.com' };
+    const user = { id: 'mockedId',name: userDTO.name,email: userDTO.email };
+    jest.spyOn(service, 'createUser').mockReturnValue(user);
     
-    expect(controller.createUser(createUserDto)).toBe('mockedId');
-    expect(service.createUser).toHaveBeenCalledWith(createUserDto.name, createUserDto.email);
+    expect(controller.createUser(userDTO)).toBe(user);
+    expect(service.createUser).toHaveBeenCalledWith(userDTO);
   });
 
   it('should get a user', () => {
-    const mockUser = { id: 'testId', name: 'John Doe', email: 'john@example.com' };
+    const mockUser = { id: 'testId', name: 'balerion', email: 'semurio@example.com' };
     jest.spyOn(service, 'getUser').mockReturnValue(mockUser);
     
     expect(controller.getUser('testId')).toBe(mockUser);
@@ -37,9 +39,10 @@ describe('UserController', () => {
   });
 
   it('should update user email', () => {
-    jest.spyOn(service, 'updateUserEmail').mockReturnValue(true);
-    
-    expect(controller.updateUserEmail('testId', 'newemail@example.com')).toBe(true);
-    expect(service.updateUserEmail).toHaveBeenCalledWith('testId', 'newemail@example.com');
+    const user = { id: 'mockedId',name:"balerion",email: 'semurio@example.com' };
+    jest.spyOn(service, 'updateUserEmail').mockReturnValue(user);
+   
+    expect(controller.updateUserEmail('testId', 'revivio@example.com')).toBe(user);
+    expect(service.updateUserEmail).toHaveBeenCalledWith('testId', 'revivio@example.com');
   });
 });

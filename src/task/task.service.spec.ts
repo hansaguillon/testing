@@ -1,5 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TaskService } from './task.service';
+import { TaskDTO } from './task.dto';
+import { ITask } from './task.interface';
 
 describe('TaskService', () => {
   let service: TaskService;
@@ -13,23 +15,35 @@ describe('TaskService', () => {
   });
 
   it('should create a task', () => {
-    const id = service.createTask('Test Task', 'Description');
-    expect(id).toBeDefined();
+    const taskDto: TaskDTO = { title: 'Test Task', description: 'Description' };
+    const task: ITask = service.createTask(taskDto);
+    
+    expect(task).toBeDefined();
+    expect(task.id).toBeDefined();
+    expect(task.title).toBe(taskDto.title);
+    expect(task.description).toBe(taskDto.description);
+    expect(task.completed).toBe(false);
   });
 
   it('should get a task', () => {
-    const id = service.createTask('Test Task', 'Description');
-    const task = service.getTask(id);
-    expect(task).toBeDefined();
-    expect(task.title).toBe('Test Task');
+    const taskDto: TaskDTO = { title: 'Test Task', description: 'Description' };
+    const createdTask: ITask = service.createTask(taskDto);
+    
+    const retrievedTask = service.getTask(createdTask.id);
+    
+    expect(retrievedTask).toBeDefined();
+    expect(retrievedTask).toEqual(createdTask);
   });
 
   it('should complete a task', () => {
-    const id = service.createTask('Test Task', 'Description');
-    const result = service.completeTask(id);
-    expect(result).toBe(true);
-    const task = service.getTask(id);
+    const taskDto: TaskDTO = { title: 'Test Task', description: 'Description' };
+    const createdTask: ITask = service.createTask(taskDto);
     
-    expect(task.completed).toBe(true);
+    const result = service.completeTask(createdTask.id);
+    
+    expect(result.completed).toBe(true);
+    
+    const updatedTask = service.getTask(createdTask.id);
+    expect(updatedTask.completed).toBe(true);
   });
 });

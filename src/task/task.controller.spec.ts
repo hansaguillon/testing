@@ -1,6 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TaskController } from './task.controller';
 import { TaskService } from './task.service';
+import { TaskDTO } from './task.dto';
+import { ITask } from './task.interface';
 
 describe('TaskController', () => {
   let controller: TaskController;
@@ -21,11 +23,17 @@ describe('TaskController', () => {
   });
 
   it('should create a task', () => {
-    const createTaskDto = { title: 'Test Task', description: 'Test Description' };
-    jest.spyOn(service, 'createTask').mockReturnValue('mockedId');
+    const createTaskDto: TaskDTO = { title: 'Test Task', description: 'Test Description' };
+    const createTask: ITask = {
+      id: 'mockedId',
+      title: createTaskDto.title,
+      description: createTaskDto.description,
+      completed: false
+    };
+    jest.spyOn(service, 'createTask').mockReturnValue(createTask);
     
-    expect(controller.createTask(createTaskDto)).toBe('mockedId');
-    expect(service.createTask).toHaveBeenCalledWith(createTaskDto.title, createTaskDto.description);
+    expect(controller.createTask(createTaskDto)).toBe(createTask);
+    expect(service.createTask).toHaveBeenCalledWith(createTaskDto);
   });
 
   it('should get a task', () => {
@@ -38,9 +46,10 @@ describe('TaskController', () => {
 
   
   it('should complete a task', () => {
-    jest.spyOn(service, 'completeTask').mockReturnValue(true);
+    const mockTask = { id: 'testId', title: 'Test Task', description: 'Test Description', completed: false };
+    jest.spyOn(service, 'completeTask').mockReturnValue(mockTask);
     
-    expect(controller.completeTask('testId')).toBe(true);
+    expect(controller.completeTask('testId')).toBe(mockTask);
     expect(service.completeTask).toHaveBeenCalledWith('testId');
   });
 });
